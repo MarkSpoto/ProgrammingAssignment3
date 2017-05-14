@@ -1,6 +1,6 @@
 # Set the working directory
 #setwd("P:/gitprojects/ProgrammingAssignment3")
-
+setwd("d:/GitHub/ProgrammingAssignment3")
 packages <- c("dplyr")
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())))  
@@ -74,6 +74,7 @@ deathByPneumonia <- function(stateCode, data) {
 # Hospital Repository
 #
 hospitalRepository <- function(x = matrix()) {
+  possibleOutcomes <- c("heart attack", "heart failure", "pneumonia")
   data <- NULL
   
   # Load hospital data
@@ -85,45 +86,55 @@ hospitalRepository <- function(x = matrix()) {
     data
   }
   
+  getOutcome <- function(stateCode, outcome) {
+    if (is.null(data)) {
+      load()  
+    }
+    
+    ## Check state abbbreviation is valid
+    if (!toupper(stateCode) %in% state.abb) {
+      stop("invalid state")
+      return(NULL)
+    }
+    
+    ## Check the outcome is valid
+    if (!tolower(outcome) %in% possibleOutcomes) {
+      #stop ("invalid outcome - Must be 'heart attack', 'heart failure' or 'pneumonia'")
+      stop ("invalid outcome")
+      return(NULL)
+    }
+    
+    ## Return hospital name in that state with lowest 30-day death rate
+    result <- NULL
+    if (tolower(outcome) == "heart attack") {
+      result <- deathByHeartAttack(toupper(stateCode), data)
+    } else if (tolower(outcome) == "heart failure") {
+      result <- deathByHeartFailure(toupper(stateCode), data)
+    } else if (tolower(outcome) == "pneumonia") {
+      result <- deathByPneumonia(toupper(stateCode), data)
+    } else {
+      message("Unknown outcome")
+    }
+    
+    # Return the result
+    result
+  }
+  
   # Store the function operations
-  list(load = load)
+  list(load = load,
+       getOutcome = getOutcome)
   
 }
 
 ## Function
-best <- function(stateCode, outcome) {
-  possibleOutcomes <- c("heart attack", "heart failure", "pneumonia")
-  
+best <- function(state, outcome) {
   ## Read out data
-  data <- NULL
+  #data <- NULL
   repository <- hospitalRepository()
-  data <- repository$load()
+  #data <- repository$load()
   
-  ## Check state abbbreviation is valid
-  if (!toupper(stateCode) %in% state.abb) {
-    stop("Invalid State")
-    return(NULL)
-  }
-  
-  ## Check the outcome is valid
-  if (!tolower(outcome) %in% possibleOutcomes) {
-    stop ("Invalid Outcome - Must be 'heart attack', 'heart failure' or 'pneumonia'")
-    return(NULL)
-  }
-  
-  ## Return hospital name in that state with lowest 30-day death rate
-  result <- NULL
-  if (tolower(outcome) == "heart attack") {
-    result <- deathByHeartAttack(toupper(stateCode), data)
-  } else if (tolower(outcome) == "heart failure") {
-    result <- deathByHeartFailure(toupper(stateCode), data)
-  } else if (tolower(outcome) == "pneumonia") {
-    result <- deathByPneumonia(toupper(stateCode), data)
-  } else {
-    message("Unknown outcome")
-  }
+  result <- repository$getOutcome(state, outcome)
   result[1,1]
 }
-
 
 
