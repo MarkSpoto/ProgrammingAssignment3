@@ -86,19 +86,41 @@ hospitalRepository <- function(x = matrix()) {
     data
   }
   
+  validOutcome <- function(outcome) {
+    if (tolower(outcome) %in% possibleOutcomes) {
+      return(1)
+    }
+    return(0)
+  }
+  
+  getStateList <- function() {
+    stateData <- getAll()
+    stateList <- unique(stateData$State)
+    stateList
+  }
+  
+  getAll <- function() {
+    if (is.null(data)) {
+      load()
+    }
+    data
+  }
+  
   getOutcome <- function(stateCode, outcome) {
     if (is.null(data)) {
       load()  
     }
     
     ## Check state abbbreviation is valid
-    if (!toupper(stateCode) %in% state.abb) {
+    stateList <- getStateList()
+    if (!toupper(stateCode) %in% stateList) {
       stop("invalid state")
       return(NULL)
     }
     
     ## Check the outcome is valid
-    if (!tolower(outcome) %in% possibleOutcomes) {
+    #if (!tolower(outcome) %in% possibleOutcomes) {
+    if (validOutcome(outcome) <= 0) {
       #stop ("invalid outcome - Must be 'heart attack', 'heart failure' or 'pneumonia'")
       stop ("invalid outcome")
       return(NULL)
@@ -122,7 +144,10 @@ hospitalRepository <- function(x = matrix()) {
   
   # Store the function operations
   list(load = load,
-       getOutcome = getOutcome)
+       validOutcome = validOutcome,
+       getAll = getAll,
+       getOutcome = getOutcome,
+       getStateList = getStateList)
   
 }
 
