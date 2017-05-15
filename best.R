@@ -1,6 +1,6 @@
 # Set the working directory
 #setwd("P:/gitprojects/ProgrammingAssignment3")
-setwd("d:/GitHub/ProgrammingAssignment3")
+#setwd("d:/GitHub/ProgrammingAssignment3")
 packages <- c("dplyr")
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())))  
@@ -86,6 +86,7 @@ hospitalRepository <- function(x = matrix()) {
     data
   }
   
+  # Function to validate outcome
   validOutcome <- function(outcome) {
     if (tolower(outcome) %in% possibleOutcomes) {
       return(1)
@@ -93,12 +94,14 @@ hospitalRepository <- function(x = matrix()) {
     return(0)
   }
   
+  # Function to get state list
   getStateList <- function() {
     stateData <- getAll()
     stateList <- unique(stateData$State)
     stateList
   }
   
+  # Function to get all data
   getAll <- function() {
     if (is.null(data)) {
       load()
@@ -106,6 +109,7 @@ hospitalRepository <- function(x = matrix()) {
     data
   }
   
+  # Function to get the outcome
   getOutcome <- function(stateCode, outcome) {
     if (is.null(data)) {
       load()  
@@ -154,9 +158,7 @@ hospitalRepository <- function(x = matrix()) {
 ## Function
 best <- function(state, outcome) {
   ## Read out data
-  #data <- NULL
   repository <- hospitalRepository()
-  #data <- repository$load()
   
   result <- repository$getOutcome(state, outcome)
   result[1,1]

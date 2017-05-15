@@ -10,6 +10,7 @@ best("NY", "hert attack")
 
 
 best("MA", "Heart Attack")
+
 rankhospital("MA", "Heart Attack", 53)
 
 rankhospitalState("MA", "Heart Attack", 53)
@@ -27,6 +28,7 @@ repository$getStateList()
 rankall("Heart Attack",20)
 head(rankall("heart attack", 20), 10)
 tail(rankall("pneumonia", "worst"), 3)
+tail(rankall("heart failure"), 10)
 
 repo <- hospitalRepository()
 x <- repo$getAll()

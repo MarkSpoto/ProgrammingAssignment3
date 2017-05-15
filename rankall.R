@@ -11,8 +11,8 @@ rankall <- function(outcome, num = "best") {
   ## Read outcome data
   repository <- hospitalRepository()
   
-  data <- repository$getAll()
-  if (is.null(data)) {
+  statedata <- repository$getAll()
+  if (is.null(statedata)) {
     stop("Data Load is NULL")
   }
   
@@ -22,12 +22,13 @@ rankall <- function(outcome, num = "best") {
   }
   
   ## For each state, find the hospital of the given rank
-  stateList <- unique(data$State)
+  stateList <- unique(statedata$State)
   bestStateHospitals <- data.frame(hospital = character(), state = character(), rank = numeric(), stringsAsFactors = FALSE)
   
   i <- 1
   for (state in stateList) {
-    result <- rankhospitalState(state, outcome, num)
+    data <- repository$getOutcome(state, outcome)
+    result <- rankhospitalState(data, state, outcome, num)
     hospital <- NA
     rank <- NA
     if (!is.null(result) && !is.na(result)) {
